@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.9999758230064307 0.006925517771111986 0.0006249849707447022 0.1800043285006621
-  position -0.006071657238982878 0.2051736826127947 0.6818622861326191
+  orientation -0.9618325726325462 -0.26408659398750023 -0.07166849446680851 0.5500054425797388
+  position -0.05819304000587598 0.29955122805355583 0.5669459373247816
 }
 TexturedBackground {
 }
@@ -24,6 +24,9 @@ DEF OMNI_WHEELS Robot {
           device [
             RotationalMotor {
               name "wheel1"
+            }
+            PositionSensor {
+              name "encoder1"
             }
           ]
           endPoint Solid {
@@ -687,14 +690,43 @@ DEF OMNI_WHEELS Robot {
     }
     DistanceSensor {
       translation 0.025 0.09 0.1
+      rotation 0 1 0 0.087
       children [
         Shape {
-          geometry Box {
+          appearance DEF GRAY PBRAppearance {
+            baseColor 0.7294117647058823 0.7411764705882353 0.7137254901960784
+            roughness 1
+            metalness 0
+          }
+          geometry DEF SENSOR Box {
             size 0.043 0.015 0.01
           }
         }
       ]
       name "DSENSOR_F1"
+      lookupTable [
+        0 0 0
+        0.02 0 0
+        5 1660 0
+      ]
+      resolution 1
+    }
+    DistanceSensor {
+      translation -0.025 0.09 0.1
+      rotation 0 1 0 -0.087
+      children [
+        Shape {
+          appearance USE GRAY
+          geometry USE SENSOR
+        }
+      ]
+      name "DSENSOR_F2"
+      lookupTable [
+        0 0 0
+        0.02 0 0
+        5 1660 0
+      ]
+      resolution 1
     }
   ]
   boundingObject USE BODY_TRANS
