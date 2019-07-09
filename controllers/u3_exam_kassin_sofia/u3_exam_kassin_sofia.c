@@ -33,11 +33,9 @@ int vel=3;
 int turn_r=0;
 int turn_l=0; 
 
-int gir_r=0;
-int fir_l=0;
-
 float dis1=0;
 float dis2=0;
+float disl_v=0;
 
 float  m1=0;
 float m2=0;
@@ -103,36 +101,69 @@ int main(int argc, char **argv)
    
    printf ("pos1 : %f  ",pos1_v);
    
-   printf ("dis1 : %.2f  ",dis1);
-   printf ("dis2 : %.2f  ",dis2);
+   printf ("dis1 : %.2f \t ",dis1);
+   printf ("dis2 : %.2f \t ",dis2);
    
-   printf ("m1 : %f  ",m1);
+   printf ("m1 : %f \t ",m1);
    printf ("m2 : %f\n",m2);
    
-    printf ("posfinal : %f ",pos_f);
+    printf ("posfinal : %f \t",pos_f);
+    
+    printf("The distance value in Left (BITS): %f \t", disl_v);
+  
+  printf("The distance measure Left  (M): %f \t", dis1);
+  
+  printf("The distance measure Right  (M): %f \t", dis2);
+   
+  printf("The final position is: %f" , pos_f);
      
    
    
    
-  if (dis1 <=0.17 && dis1 < dis2 && turn_r== 0) {
-  pos_f=pos1_v-3.14156;
-  turn_r=1;
+  if (dis1 <= 0.17 && dis1 > dis2 && turn_r == 0) {
+  pos_f = pos1_v - 3.14156;
+  turn_r = 1;
   } 
   
-   if (turn_r==1){
-     if(pos1_v>pos_f){
+   if (turn_r == 1){
+     if(pos1_v > pos_f){
        wb_motor_set_velocity(wheel_left, -vel);
-       wb_motor_set_velocity(wheel_right, -vel);
-       wb_motor_set_velocity(wheel_front, -vel);
+       wb_motor_set_velocity(wheel_right, 0);
+       wb_motor_set_velocity(wheel_front, vel);
    }
    
        else{
-       turn_r=0;
+       turn_r = 0;
        }
        
    }
    
-  };
+   if (dis2 <= 0.17 && dis2 > dis1 && turn_l == 0){
+   pos_f = pos1_v - 3.14156;
+   turn_l = 1;
+   }    
+   
+   if(turn_l == 1){
+     if(pos1_v > pos_f){
+       wb_motor_set_velocity(wheel_left, vel);
+       wb_motor_set_velocity(wheel_right,   0);
+       wb_motor_set_velocity(wheel_front, -vel);   
+   }
+  else{
+  turn_l = 0;
+  }
+  
+  } 
+  }
+  
+  printf("The distance value in Left (BITS): %f ", disl_v);
+  
+  printf("The distance measure Left  (M): %f \t", dis1);
+  
+  printf("The distance measure Right  (M): %f \t", dis2);
+   
+  printf("The final position is: %f" , pos_f);
+  //};
 
   /* Enter your cleanup code here */
 
