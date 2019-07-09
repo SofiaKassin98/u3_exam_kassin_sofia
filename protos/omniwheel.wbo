@@ -1,16 +1,4 @@
-#VRML_SIM R2019a utf8
-WorldInfo {
-}
-Viewpoint {
-  orientation -0.9618325726325462 -0.26408659398750023 -0.07166849446680851 0.5500054425797388
-  position -0.0468557312147959 0.25472916250731104 0.4912917078974806
-}
-TexturedBackground {
-}
-TexturedBackgroundLight {
-}
-Floor {
-}
+#VRML_OBJ R2019a utf8
 DEF OMNI_WHEELS Robot {
   translation 0 0.06 0
   children [
@@ -24,9 +12,6 @@ DEF OMNI_WHEELS Robot {
           device [
             RotationalMotor {
               name "wheel1"
-            }
-            PositionSensor {
-              name "encoder1"
             }
           ]
           endPoint Solid {
@@ -294,7 +279,7 @@ DEF OMNI_WHEELS Robot {
           ]
           endPoint Solid {
             translation 0 0 0.1
-            rotation 0 0 1 0.00240580999995935
+            rotation 0 0 1 0.00240581
             children [
               DEF sr1 HingeJoint {
                 jointParameters HingeJointParameters {
@@ -490,7 +475,7 @@ DEF OMNI_WHEELS Robot {
           ]
           endPoint Solid {
             translation 0 0 0.1
-            rotation 0 0 1 0.0039094400000208316
+            rotation 0 0 1 0.00390944
             children [
               DEF sr1 HingeJoint {
                 jointParameters HingeJointParameters {
@@ -676,61 +661,21 @@ DEF OMNI_WHEELS Robot {
       children [
         Shape {
           appearance PBRAppearance {
-            baseColor 0.6784313725490196 0.4980392156862745 0.6588235294117647
+            baseColor 0.564706 0.933333 0.564706
             roughness 1
             metalness 0
           }
           geometry Cylinder {
-            height 0.09999999999999999
+            height 0.15
             radius 0.1
             subdivision 18
           }
         }
       ]
     }
-    DistanceSensor {
-      translation 0.03 0.09 0.1
-      rotation 0 1 0 0.087
-      children [
-        Shape {
-          appearance DEF GRAY PBRAppearance {
-            baseColor 0.7294117647058823 0.7411764705882353 0.7137254901960784
-            roughness 1
-            metalness 0
-          }
-          geometry DEF SENSOR Box {
-            size 0.043 0.015 0.01
-          }
-        }
-      ]
-      name "DSENSOR_F1"
-      lookupTable [
-        0 0 0
-        0.02 0 0
-        5 1660 0
-      ]
-      resolution 1
-    }
-    DistanceSensor {
-      translation -0.03 0.09 0.1
-      rotation 0 1 0 -0.087
-      children [
-        Shape {
-          appearance USE GRAY
-          geometry USE SENSOR
-        }
-      ]
-      name "DSENSOR_F2"
-      lookupTable [
-        0 0 0
-        0.02 0 0
-        5 1660 0
-      ]
-      resolution 1
-    }
   ]
   boundingObject USE BODY_TRANS
   physics Physics {
   }
-  controller "omnidirectional_robot"
+  controller "omni_wheels"
 }

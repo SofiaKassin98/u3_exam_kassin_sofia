@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.9618325726325462 -0.26408659398750023 -0.07166849446680851 0.5500054425797388
-  position -0.0468557312147959 0.25472916250731104 0.4912917078974806
+  orientation 0.0022571465839951424 -0.9959705580326403 -0.08965239997596099 3.1917325395351743
+  position 0.027981538942827067 0.24180698339147505 -0.8239131801153972
 }
 TexturedBackground {
 }
@@ -24,6 +24,8 @@ DEF OMNI_WHEELS Robot {
           device [
             RotationalMotor {
               name "wheel1"
+              maxVelocity 20.944
+              maxTorque 0.8474
             }
             PositionSensor {
               name "encoder1"
@@ -290,6 +292,11 @@ DEF OMNI_WHEELS Robot {
           device [
             RotationalMotor {
               name "wheel2"
+              maxVelocity 20.944
+              maxTorque 0.8474
+            }
+            PositionSensor {
+              name "encoder2"
             }
           ]
           endPoint Solid {
@@ -486,6 +493,8 @@ DEF OMNI_WHEELS Robot {
           device [
             RotationalMotor {
               name "wheel3"
+              maxVelocity 20.944
+              maxTorque 0.8474
             }
           ]
           endPoint Solid {
@@ -689,8 +698,8 @@ DEF OMNI_WHEELS Robot {
       ]
     }
     DistanceSensor {
-      translation 0.03 0.09 0.1
-      rotation 0 1 0 0.087
+      translation 0.059 0.09000000000000001 0.1
+      rotation 0 1 0 4.930289693899574
       children [
         Shape {
           appearance DEF GRAY PBRAppearance {
@@ -706,14 +715,13 @@ DEF OMNI_WHEELS Robot {
       name "DSENSOR_F1"
       lookupTable [
         0 0 0
-        0.02 0 0
-        5 1660 0
+        0.2 65535 0
       ]
       resolution 1
     }
     DistanceSensor {
-      translation -0.03 0.09 0.1
-      rotation 0 1 0 -0.087
+      translation -0.056 0.09 0.1
+      rotation 0 1 0 4.625388965999999
       children [
         Shape {
           appearance USE GRAY
@@ -723,8 +731,7 @@ DEF OMNI_WHEELS Robot {
       name "DSENSOR_F2"
       lookupTable [
         0 0 0
-        0.02 0 0
-        5 1660 0
+        0.2 65535 0
       ]
       resolution 1
     }
