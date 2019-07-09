@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.004835812443303737 0.992945890178207 0.11846971805580273 3.060574931859602
-  position 0.04145143894394512 0.3594524954548431 -1.186590774377138
+  orientation -0.10983066646014376 0.9894684844387807 0.0942833124542375 1.4292234241814523
+  position 1.796585788320488 0.31715725162395414 0.4906223706063861
 }
 TexturedBackground {
 }
@@ -743,4 +743,22 @@ DEF OMNI_WHEELS Robot {
 }
 DesktopComputer {
   translation -0.2700000000000001 0 0.9000000000000006
+}
+Solid {
+  translation 0.4600000000000002 0.16 0.7100000000000019
+  children [
+    Transform {
+      children [
+        Shape {
+          appearance USE GRAY
+          geometry DEF wall Box {
+            size 1.3 0.3 0.1
+          }
+        }
+      ]
+    }
+  ]
+  boundingObject USE wall
+  physics Physics {
+  }
 }

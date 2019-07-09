@@ -17,6 +17,8 @@
 #include <webots/keyboard.h>
 
 #include <stdio.h> 
+#include <stdlib.h> 
+#include <math.h> 
 
 /*
  * You may want to add macros here.
@@ -24,12 +26,27 @@
 #define TIME_STEP 64
 #define PI 3.141592
 
-#define OBSTACLE DISTANCE 17  
+#define OBSTACLE DISTANCE 17 
 
-int dis1;
-int  dis2;
-int m1;
-int m2;
+int vel=3;
+
+int turn_r=0;
+int turn_l=0; 
+
+int gir_r=0;
+int fir_l=0;
+
+float dis1=0;
+float dis2=0;
+
+float  m1=0;
+float m2=0;
+
+float pos1_v=0;
+float pos2_v=0;
+float pos3_v=0;
+
+float pos_f=0;
 
 /*
  * This is the main program.
@@ -67,31 +84,53 @@ int main(int argc, char **argv)
 
   while (wb_robot_step(TIME_STEP) != -1) {
 
-   wb_motor_set_velocity(wheel_left,0);
-   wb_motor_set_velocity(wheel_right, 10);
-   wb_motor_set_velocity(wheel_front, -10);
+   wb_motor_set_velocity(wheel_left,-vel);
+   wb_motor_set_velocity(wheel_right,vel);
+   wb_motor_set_velocity(wheel_front,  0);
    
    
    
    dis1 = wb_distance_sensor_get_value(distance_sensor1);
    dis2 = wb_distance_sensor_get_value(distance_sensor2);
    
-   m1=((dis1)*(0.2)/65000);
-   m2=((dis2)*(0.2)/65000);
+   pos1_v = wb_position_sensor_get_value(pos_right);
+   pos2_v = wb_position_sensor_get_value(pos_left);
+   pos3_v = wb_position_sensor_get_value(pos_front);
+     
+   m1=((dis1)*(0.2)/65535);
+   m2=((dis2)*(0.2)/65535);
    
    
+   printf ("pos1 : %f  ",pos1_v);
    
+   printf ("dis1 : %.2f  ",dis1);
+   printf ("dis2 : %.2f  ",dis2);
    
-   printf ("dis1 : %d\n",dis1);
-   printf ("dis2 : %d\n",dis2);
+   printf ("m1 : %f  ",m1);
+   printf ("m2 : %f\n",m2);
    
-   printf ("m1 : %d\n",m1);
-   printf ("m2 : %d\n",m2);
+    printf ("posfinal : %f ",pos_f);
      
    
    
    
+  if (dis1 <=0.17 && dis1 < dis2 && turn_r== 0) {
+  pos_f=pos1_v-3.14156;
+  turn_r=1;
+  } 
+  
+   if (turn_r==1){
+     if(pos1_v>pos_f){
+       wb_motor_set_velocity(wheel_left, -vel);
+       wb_motor_set_velocity(wheel_right, -vel);
+       wb_motor_set_velocity(wheel_front, -vel);
+   }
    
+       else{
+       turn_r=0;
+       }
+       
+   }
    
   };
 
