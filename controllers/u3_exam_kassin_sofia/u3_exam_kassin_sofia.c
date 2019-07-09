@@ -25,6 +25,12 @@
 #define PI 3.141592
 
 #define OBSTACLE DISTANCE 17  
+
+int dis1;
+int  dis2;
+int m1;
+int m2;
+
 /*
  * This is the main program.
  * The arguments of the main function can be specified by the
@@ -34,23 +40,24 @@ int main(int argc, char **argv)
 {
   /* necessary to initialize webots stuff */
   wb_robot_init();
-
+  
    WbDeviceTag wheel_left= wb_robot_get_device("wheel1");
    WbDeviceTag wheel_right = wb_robot_get_device("wheel2");
    WbDeviceTag wheel_front = wb_robot_get_device("wheel3");
    
-   WbDeviceTag distance_sensor = wb_robot_get_device("DSENSOR_F1");
-   wb_distance_sensor_enable(distance_sensor, TIME_STEP); 
-   WbDeviceTag distance_sensor = wb_robot_get_device("DSENSOR_F2");
-   wb_distance_sensor_enable(distance_sensor, TIME_STEP);
+   WbDeviceTag distance_sensor1 = wb_robot_get_device("DSENSOR_1");
+   wb_distance_sensor_enable(distance_sensor1, TIME_STEP); 
+   WbDeviceTag distance_sensor2 = wb_robot_get_device("DSENSOR_2");
+   wb_distance_sensor_enable(distance_sensor2, TIME_STEP);
     
    
-   WbDeviceTag pos_right = wb_robot_get_device("encoder1");
-   WbDeviceTag pos_left = wb_robot_get_device("encoder2");
+   WbDeviceTag pos_right = wb_robot_get_device("enco1");
+   WbDeviceTag pos_left = wb_robot_get_device("enco2");
    WbDeviceTag pos_front = wb_robot_get_device("encoder3");
   
    wb_position_sensor_enable(pos_right, TIME_STEP);
    wb_position_sensor_enable(pos_left, TIME_STEP);
+   wb_position_sensor_enable(pos_front, TIME_STEP);
   
    wb_motor_set_position(wheel_right, INFINITY);   
    wb_motor_set_position(wheel_left, INFINITY);
@@ -60,18 +67,32 @@ int main(int argc, char **argv)
 
   while (wb_robot_step(TIME_STEP) != -1) {
 
-    /*
-     * Read the sensors :
-     * Enter here functions to read sensor data, like:
-     *  double val = wb_distance_sensor_get_value(my_sensor);
-     */
-
-    /* Process sensor data here */
-
-    /*
-     * Enter here functions to send actuator commands, like:
-     * wb_differential_wheels_set_speed(100.0,100.0);
-     */
+   wb_motor_set_velocity(wheel_left,0);
+   wb_motor_set_velocity(wheel_right, 10);
+   wb_motor_set_velocity(wheel_front, -10);
+   
+   
+   
+   dis1 = wb_distance_sensor_get_value(distance_sensor1);
+   dis2 = wb_distance_sensor_get_value(distance_sensor2);
+   
+   m1=((dis1)*(0.2)/65000);
+   m2=((dis2)*(0.2)/65000);
+   
+   
+   
+   
+   printf ("dis1 : %d\n",dis1);
+   printf ("dis2 : %d\n",dis2);
+   
+   printf ("m1 : %d\n",m1);
+   printf ("m2 : %d\n",m2);
+     
+   
+   
+   
+   
+   
   };
 
   /* Enter your cleanup code here */

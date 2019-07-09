@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.0022571465839951424 -0.9959705580326403 -0.08965239997596099 3.1917325395351743
-  position 0.027981538942827067 0.24180698339147505 -0.8239131801153972
+  orientation -0.004835812443303737 0.992945890178207 0.11846971805580273 3.060574931859602
+  position 0.04145143894394512 0.3594524954548431 -1.186590774377138
 }
 TexturedBackground {
 }
@@ -28,7 +28,7 @@ DEF OMNI_WHEELS Robot {
               maxTorque 0.8474
             }
             PositionSensor {
-              name "encoder1"
+              name "enco1"
             }
           ]
           endPoint Solid {
@@ -274,7 +274,6 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "wheel 1"
       boundingObject DEF DUMMY Sphere {
         radius 0.01
       }
@@ -296,7 +295,7 @@ DEF OMNI_WHEELS Robot {
               maxTorque 0.8474
             }
             PositionSensor {
-              name "encoder2"
+              name "enco2"
             }
           ]
           endPoint Solid {
@@ -477,7 +476,6 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "wheel 2"
       boundingObject USE DUMMY
       physics Physics {
       }
@@ -495,6 +493,9 @@ DEF OMNI_WHEELS Robot {
               name "wheel3"
               maxVelocity 20.944
               maxTorque 0.8474
+            }
+            PositionSensor {
+              name "encoder3"
             }
           ]
           endPoint Solid {
@@ -675,7 +676,6 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "wheel 3"
       boundingObject USE DUMMY
       physics Physics {
       }
@@ -712,7 +712,7 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "DSENSOR_F1"
+      name "DSENSOR_1"
       lookupTable [
         0 0 0
         0.2 65535 0
@@ -728,7 +728,7 @@ DEF OMNI_WHEELS Robot {
           geometry USE SENSOR
         }
       ]
-      name "DSENSOR_F2"
+      name "DSENSOR_2"
       lookupTable [
         0 0 0
         0.2 65535 0
@@ -739,5 +739,8 @@ DEF OMNI_WHEELS Robot {
   boundingObject USE BODY_TRANS
   physics Physics {
   }
-  controller "omnidirectional_robot"
+  controller "u3_exam_kassin_sofia"
+}
+DesktopComputer {
+  translation -0.2700000000000001 0 0.9000000000000006
 }
