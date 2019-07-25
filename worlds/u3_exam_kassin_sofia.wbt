@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.10983066646014376 0.9894684844387807 0.0942833124542375 1.4292234241814523
-  position 1.796585788320488 0.31715725162395414 0.4906223706063861
+  orientation 0.996719594115899 0.07041898721316522 0.03989006073334085 5.2495683446233565
+  position -0.04878767014187402 2.827873571545166 1.7038208816476987
 }
 TexturedBackground {
 }
@@ -28,7 +28,7 @@ DEF OMNI_WHEELS Robot {
               maxTorque 0.8474
             }
             PositionSensor {
-              name "enco1"
+              name "enco_1"
             }
           ]
           endPoint Solid {
@@ -295,7 +295,7 @@ DEF OMNI_WHEELS Robot {
               maxTorque 0.8474
             }
             PositionSensor {
-              name "enco2"
+              name "enco_2"
             }
           ]
           endPoint Solid {
@@ -495,7 +495,7 @@ DEF OMNI_WHEELS Robot {
               maxTorque 0.8474
             }
             PositionSensor {
-              name "encoder3"
+              name "enco_3"
             }
           ]
           endPoint Solid {
@@ -742,19 +742,41 @@ DEF OMNI_WHEELS Robot {
   controller "u3_exam_kassin_sofia"
 }
 Solid {
-  translation 0.4600000000000002 0.16 0.7100000000000019
+  translation -0.3800000027286908 0.16 0.882820337169354
+  rotation 0 1 0 6.283185277377264
   children [
     Transform {
       children [
         Shape {
           appearance USE GRAY
           geometry DEF wall Box {
-            size 1.3 0.3 0.1
+            size 0.5 0.3 0.1
           }
         }
       ]
     }
   ]
+  name "solid(1)"
+  boundingObject USE wall
+  physics Physics {
+  }
+}
+Solid {
+  translation 0.2900000103843315 0.16 0.4428203571369076
+  rotation 0 1 0 6.283185277377264
+  children [
+    Transform {
+      children [
+        Shape {
+          appearance USE GRAY
+          geometry DEF wall Box {
+            size 0.5 0.3 0.1
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(2)"
   boundingObject USE wall
   physics Physics {
   }

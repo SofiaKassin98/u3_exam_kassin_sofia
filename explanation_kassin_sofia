@@ -1,6 +1,54 @@
 A omnidirectional robot is is used to move in all directions  what is important for this kind of robots are the Omni wheels or poly wheels, similar to Mecanum wheels, are wheels with small discs around the circumference which are perpendicular to the turning direction. The effect is that the wheel can be driven with full force, but will also slide laterally with great ease.  
 
-Explaining the code:
+
+For the values that i took from the data sheet were:
+_____________________________________________________________________________________________________________________
+Voltage      |     no-load performance      |     stall extrapolation
+             |                              |
+12v          |   200 RPM, 300 mA            |  8.5 kg*cm (120 oz*in),5.6A
+MOTORS
+
+So what i did for the motors (this Pololu has an gear 34:1 with 200 RPM and a torque 120 oz-in) values:
+The equivalance is 1Nm = 141.611928 oz-in 
+maxTorque:  120 oz*in -----> 0.8474N*m
+maxVelocity 290 RPM ------> 30.3687 rad/s
+
+_____________________________________________________________________________________________________________________
+ENCODER
+To calculate  the resolution of the encoder I take from the datasheet the value of 1632.67 counts per revolution                    
+Resolution = 2pi/1632.67= 0.003848411073
+
+
+_____________________________________________________________________________________________________________________
+SENSOR
+To turn the sensor 5° degrees i just made this formule
+180=PI
+5XPI/180=0.0872    ---->The value of rotation in its specific axis
+
+
+DISTANCE SENSOR
+For the Distance sensor i use:
+Resolution: 1 
+Look up table:
+0         0        0
+0.2    65535       0    
+
+The range of operation is from 0 to 200 mm that is 0.2m for the min distance
+(2**16)-1= 65535 for the 
+
+
+___________________________________________________________________________________________________________________________
+OBSTACLE DISTANCE
+Taking in consideration the max value of the distance sensor that is 200mm and the value that you give us of 17 cm of the obstacle:
+
+20 cm ---  65535
+17 cm ---  55704.75
+that's why i use 55704.75 in the defining value in OBSTACLE_DISTANCE
+
+
+
+
+Code:
 
 /*
  * File:          u3_exam_kassin_sofia.c
@@ -16,164 +64,106 @@ Explaining the code:
  */
 #include <webots/robot.h>
 #include <webots/motor.h>
-#include <webots/position_sensor.h>                                      ////////You may need to add include files
-#include <webots/distance_sensor.h>                                      ////////In this part is to include all the libraries necessaries for the proyect
+#include <webots/position_sensor.h>
+#include <webots/distance_sensor.h>
 #include <webots/keyboard.h>
 
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <math.h> 
 
-
-                                                                        //////////// You may want to add macros here.
-
-#define TIME_STEP 64                                                    /////////In this part it is necessary to define specific values that we are going to use in the project.
+/*
+ * You may want to add macros here.
+ */
+#define TIME_STEP 64
 #define PI 3.141592
-                                                                       /////////There are global constants neccesaries for the proyect.
-#define OBSTACLE DISTANCE 17          
+
+#define OBSTACLE_DISTANCE 55704.75 
 
 int vel=3;
-
 int turn_r=0;
 int turn_l=0; 
 
-float dis_1=0;                                                          //////////In this part what i did it is to initialize all the variables in its specific 
-                                                                       //continue//type as (int,float,etc) to cero.
+float dis_1=0;
 float dis_2=0;
-float disl_v=0;
+float m_1=0;
+float m_2=0;
 
-float  m1=0;
-float m2=0;
-
-float pos1_v=0;
-float pos2_v=0;
-float pos3_v=0;
-
-float pos_f=0;
-
-
-                                                                               //////////This is the main program.
-                                                                               //////////The arguments of the main function can be specified by the
-                                                                               //continue///"controllerArgs" field of the Robot node
-
+/*
+ * This is the main program.
+ * The arguments of the main function can be specified by the
+ * "controllerArgs" field of the Robot node
+ */
 int main(int argc, char **argv)
 {
-                                                                               ///////// necessary to initialize webots stuff 
-  wb_robot_init();                                                             /////////initialize the webots controller library 
+  /* necessary to initialize webots stuff */
+  wb_robot_init();
   
-   WbDeviceTag wheel_left= wb_robot_get_device("wheel1");                      ////////WbDeviceTag: identifier will be used subsequently for enabling, sending commands to, 
-                                                                           //continue//or reading data from this device. If the specified device is not found, the function returns 0.
-   WbDeviceTag wheel_right = wb_robot_get_device("wheel2");
-   WbDeviceTag wheel_front = wb_robot_get_device("wheel3");
-                                                                             /////////wb_robot_get_device: returns a unique identifier for a device corresponding to a specified name
-   WbDeviceTag distance_sensor1 = wb_robot_get_device("DSENSOR_1");
-   wb_distance_sensor_enable(distance_sensor1, TIME_STEP);                   /////////wb_distance_sensor_enable: enable sensors to read data from them
-   WbDeviceTag distance_sensor2 = wb_robot_get_device("DSENSOR_2");
-   wb_distance_sensor_enable(distance_sensor2, TIME_STEP);
+  WbDeviceTag wheel_left= wb_robot_get_device("wheel1");
+  WbDeviceTag wheel_right = wb_robot_get_device("wheel2");
+  WbDeviceTag wheel_front = wb_robot_get_device("wheel3");
+   
+  WbDeviceTag distance_sensor1 = wb_robot_get_device("DSENSOR_1");
+  wb_distance_sensor_enable(distance_sensor1, TIME_STEP); 
+  WbDeviceTag distance_sensor2 = wb_robot_get_device("DSENSOR_2");
+  wb_distance_sensor_enable(distance_sensor2, TIME_STEP);  
+   
+  WbDeviceTag pos_right = wb_robot_get_device("enco_1");
+  WbDeviceTag pos_left = wb_robot_get_device("enco_2");
+  WbDeviceTag pos_front = wb_robot_get_device("enco_3");
+  
+  wb_position_sensor_enable(pos_right, TIME_STEP);
+  wb_position_sensor_enable(pos_left, TIME_STEP);
+  wb_position_sensor_enable(pos_front, TIME_STEP);
+  
+  
+
+  while (wb_robot_step(TIME_STEP) != -1) {
+  
+  wb_motor_set_position(wheel_right, INFINITY);   
+  wb_motor_set_position(wheel_left, INFINITY);
+  wb_motor_set_position(wheel_front, INFINITY);
     
-   
-   WbDeviceTag pos_right = wb_robot_get_device("enco1");
-   WbDeviceTag pos_left = wb_robot_get_device("enco2");
-   WbDeviceTag pos_front = wb_robot_get_device("encoder3");
-  
-   wb_position_sensor_enable(pos_right, TIME_STEP);                         /////////wb_position_sensor_enable: function enables measurements of the joint position
-   wb_position_sensor_enable(pos_left, TIME_STEP);
-   wb_position_sensor_enable(pos_front, TIME_STEP);
-  
-   wb_motor_set_position(wheel_right, INFINITY);                           ////////wb_motor_set_position function: The user specifies a target position using it and then the
-                                                                           ///continue//// P-controller takes into account the desired velocity
-                                                                           ///continue/// acceleration and motor force in order to move the motor to the target position.
-   wb_motor_set_position(wheel_left, INFINITY);
-   wb_motor_set_position(wheel_front, INFINITY);
-
-
-
-  while (wb_robot_step(TIME_STEP) != -1) {                                 ///////////main loop: perform simulation steps of TIME_STEP milliseconds and leave the loop when 
-                                                                           ///continue///the simulation is over.
-
-   wb_motor_set_velocity(wheel_left,-vel);   
-   wb_motor_set_velocity(wheel_right,vel);
-   wb_motor_set_velocity(wheel_front,  0);                                 ///////// wb_motor_set_velocity: This will initiate a continuous motor motion at the desired speed,                                                                     ///continue////while taking into account the specified acceleration and motor force.
-   
-   
-   
-   dis_1 = wb_distance_sensor_get_value(distance_sensor1);                 ///////////// wb_distance_sensor_get_value: the function returns the last value measured by the specified
-                                                                          ///continue/// distance sensor. This value is computed by the simulator according to the lookup table 
-                                                                          ///continue////of the DistanceSensor node.
-   dis_2 = wb_distance_sensor_get_value(distance_sensor2);
-   
-   pos1_v = wb_position_sensor_get_value(pos_right);
-   pos2_v = wb_position_sensor_get_value(pos_left);
-   pos3_v = wb_position_sensor_get_value(pos_front);                      /////////////wb_position_sensor_get_value: the function returns the most recent value measured by the
-                                                                          //continue/// specified position sensor. Depending on the type, it will return a value in radians 
-                                                                          ///continue///(angular position sensor) or in meters (linear position sensor).
+    dis_1 = wb_distance_sensor_get_value(distance_sensor1);
+    dis_2 = wb_distance_sensor_get_value(distance_sensor2);
+    
+    m_1 = dis_1*.2/65535;
+    m_2 = dis_2*.2/65535;
      
-   m_1=((dis1)*(0.2)/65535);
-   m_2=((dis2)*(0.2)/65535);                                               /////For this part on the formula I did a 3 rule knowing my value of resolution that is (2**16)-1=65,535
-                                                                          ////////m=(x)(0.2)/65535      where x is dis_1 and dis_2   and 0.2 is my min distance over the resolution   
-   printf ("pos1 : %f  ",pos1_v);
-   
-   printf ("dis_1 : %.2f \t ",dis_1);
-   printf ("dis_2 : %.2f \t ",dis_2);
-   
-   printf ("m_1 : %f \t ",m1);
-   printf ("m_2 : %f\n",m2);                                            ////////Here is just to print the values in the console
-   
-    printf ("posfinal : %f \t",pos_f);
+    if (dis_1 <= OBSTACLE_DISTANCE && dis_2 > OBSTACLE_DISTANCE){
+      wb_motor_set_velocity(wheel_left, vel);
+      wb_motor_set_velocity(wheel_right, vel);
+      wb_motor_set_velocity(wheel_front, vel);
+    }
     
-    printf("The distance value in Left (BITS): %f \t", disl_v);
+    if (dis_1 >= OBSTACLE_DISTANCE && dis_2 < OBSTACLE_DISTANCE){
+      wb_motor_set_velocity(wheel_left, -vel);
+      wb_motor_set_velocity(wheel_right, -vel);
+      wb_motor_set_velocity(wheel_front, -vel);
+    }
+     
+    if (dis_1 <= OBSTACLE_DISTANCE && dis_2 <= OBSTACLE_DISTANCE){
+      wb_motor_set_velocity(wheel_left, -vel);
+      wb_motor_set_velocity(wheel_right, -vel);
+      wb_motor_set_velocity(wheel_front, -vel);
+    }
+     
+    if (dis_1 > OBSTACLE_DISTANCE && dis_2 > OBSTACLE_DISTANCE){
+      wb_motor_set_velocity(wheel_left, 0);
+      wb_motor_set_velocity(wheel_right,vel);
+      wb_motor_set_velocity(wheel_front,-vel);
+    }
+    
+    
+    printf("The distance measure Left  (M): %f \t", dis_1);
+    
+    printf("The distance measure Right  (M): %f \t", dis_2);
   
-  printf("The distance measure Left  (M): %f \t", dis_1);
-  
-  printf("The distance measure Right  (M): %f \t", dis_2);
    
-  printf("The final position is: %f" , pos_f);
-                                                                          ///////when the left sensor has a greater distance to what the right detects and there is no movement in
-                                                                          //continue// the right, then it enters the looop where the position is made which activates the movement 
-                                                                          //continue//of the right, when it enters the movement of the right turn_r = 1, then do the speed.
-   
-                                                                    
-   
-if (m_1 <= 0.17 && dis_1 > dis_2 && turn_r == 0) {                       ////Here says if m_1 is less or equal to 0.17 and dis_1 is more than dis_2 then turn_r equal to 0
-  pos_f = pos1_v + 3.14156;                                              ///continue// but if pos_f is equis tu pof_v plus 3,1415 then tur_r is equal to 1
-  turn_r = 1; 
-  } 
-  
-   if (turn_r == 1){                                                      ////////if turn_r is equal to 1 and if pos_1v is more than pos_f then the wheels rotate
-     if(pos1_v > pos_f){
-       wb_motor_set_velocity(wheel_left, -vel);
-       wb_motor_set_velocity(wheel_right, -vel);
-       wb_motor_set_velocity(wheel_front, -vel);
-   }
-   
-       else{                                                              /////// if not turn_r should change to 0 
-       turn_r = 0;
-       }
-       
-   }
-   
-   if (m_2 <= 0.17 && dis_2 > dis_1 && turn_l == 0){                      /////// if m_2 is less or equal than 0.17 and dis_2 is more than dis_1 and turn_l is equal to 0 
-   pos_f = pos1_v + 4.14156;                                              /////pos_f is equal to pos1_v plus 4.14156 then turn_l shoul change to one.
-   turn_l = 1;
-   }    
-   
-   if(turn_l == 1){                                                       /////// if turn_l is equal to 1 and if pos1_v is less and equal to pos_f the robot turn in the
-                                                                          ////continue// contrary direction.
-     if(pos1_v < pos_f){
-       wb_motor_set_velocity(wheel_left, vel);
-       wb_motor_set_velocity(wheel_right, vel);
-       wb_motor_set_velocity(wheel_front, vel);   
-   }
-  else{
-  turn_l = 0;                                                             ///then the value turn_l change to 0 .
-  }
-  
-  } 
-  } 
-  
-  
- 
+    printf ("m_1 : %f \t ",m_1);
+    printf ("m_2 : %f\n",m_2);
 
+  }
   /* Enter your cleanup code here */
 
   /* This is necessary to cleanup webots resources */
@@ -184,38 +174,11 @@ if (m_1 <= 0.17 && dis_1 > dis_2 && turn_r == 0) {                       ////Her
 
 
 
-For the values that i took from the data sheet were:
-
-Voltage      |     no-load performance      |     stall extrapolation
-             |                              |
-12v          |   200 RPM, 300 mA            |  8.5 kg*cm (120 oz*in),5.6A
-MOTORS
-
-So what i did for the motors (this Pololu has an gear 34:1 with 200 RPM and a torque 120 oz-in) values:
-The equivalance is 1Nm = 141.611928 oz-in 
-maxTorque:  120 oz*in -----> 0.8474N*m
-maxVelocity 290 RPM ------> 30.3687 rad/s
 
 
-ENCODER
-To calculate  the resolution of the encoder I take from the datasheet the value of 1632.67 counts per revolution                    
-Resolution = 2pi/1632.67= 0.003848411073
 
 
-SENSOR
-To turn the sensor 5° degrees i just made this formule
-180=PI
-5XPI/180=0.0872    ---->The value of rotation in its specific axis
 
-DISTANCE SENSOR
-For the Distance sensor i use:
-Resolution: 1 
-Look up table:
-0         0        0
-0.2    65535       0    
-
-The range of operation is from 0 to 200 mm that is 0.2m for the min distance
-(2**16)-1= 65535 for the 
 
 
 
